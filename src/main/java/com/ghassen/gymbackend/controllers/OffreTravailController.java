@@ -37,6 +37,11 @@ public class OffreTravailController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/employer/{userId}/all")
+    public ResponseEntity<List<OffreTravail>> getAllMyOffers(@PathVariable Long userId) {
+        List<OffreTravail> offers = offreService.getAllMyOffers(userId);
+        return ResponseEntity.ok(offers);
+    }
 
     @GetMapping("/employer/{userId}")
     public ResponseEntity<List<OffreTravail>> getMyOffers(@PathVariable Long userId) {
@@ -71,6 +76,15 @@ public class OffreTravailController {
 
         List<Candidature> applicants = offreService.getApplicantsForMyOffer(offreId, employerId);
         return ResponseEntity.ok(applicants);
+    }
+
+    @PutMapping("/{offreId}/cancel/{userId}")
+    public ResponseEntity<OffreTravail> cancelOffre(
+            @PathVariable Long offreId,
+            @PathVariable Long userId) {
+
+        OffreTravail updated = offreService.cancelOffer(offreId, userId);
+        return ResponseEntity.ok(updated);
     }
 
 
