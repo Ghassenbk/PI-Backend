@@ -96,6 +96,28 @@ public class OffreTravailService {
         return candidatureRepo.findByOffreTravailId(offreId);
     }
 
+    @Transactional
+    public OffreTravail updateStatus(Long offreId, Long userId, Status newStatus) {
+
+        OffreTravail offre = offreRepo.findById(offreId)
+                .orElseThrow(() -> new IllegalArgumentException("Offre introuvable : " + offreId));
+
+        Utilisateur user = userRepo.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable : " + userId));
+
+        boolean isOwner = offre.getEmployer().getId().equals(userId);
+        boolean isAdmin = user.getRoles().contains("ADMIN");
+        if (!isOwner && !isAdmin) {
+            throw new SecurityException("Accès refusé : vous ne pouvez modifier que vos propres offres.");
+        }
+
+        offre.setStatus(newStatus);
+        return offreRepo.save(offre);
+    }
+    @Transactional
+    public OffreTravail cancelOffer(Long offreId, Long userId) {
+        return updateStatus(offreId, userId, Status.ANNULEE);
+    }
 
 
     @Transactional
@@ -140,6 +162,12 @@ public class OffreTravailService {
 
         return offreRepo.save(offre);
     }
+
+    @Transactional(readOnly = true)
+    public List<OffreTravail> getAllMyOffers(Long userId) {
+        return offreRepo.findByEmployerId(userId);
+    }
+
 
 
     @Transactional
