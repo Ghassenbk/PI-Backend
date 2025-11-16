@@ -32,12 +32,16 @@ public class Candidature {
     @Column(name = "status")
     private StatusCandidature status = StatusCandidature.EN_ATTENTE;
 
+    // NEW FIELD: Message from the applicant (cover letter, motivation, etc.)
+    @Column(name = "message", columnDefinition = "TEXT")
+    private String message;
+
     // RELATIONSHIPS
     @ManyToOne
     @JoinColumn(name = "id_utilisateur")
     private Utilisateur utilisateur;
 
-    @JsonIgnore  // PREVENT INFINITE LOOP
+    @JsonIgnore  // Prevents infinite recursion in JSON
     @ManyToOne
     @JoinColumn(name = "id_offre")
     private OffreTravail offreTravail;

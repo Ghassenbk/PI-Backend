@@ -2,12 +2,10 @@ package com.ghassen.gymbackend.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,16 +34,21 @@ public class Utilisateur {
     @Email
     private String email;
 
+    @Column(name = "telephone", length = 20, unique = true)
+    @NotBlank(message = "Le numéro de téléphone est obligatoire")
+    @Pattern(
+            regexp = "^(\\+216|216|00216)?[0-9]{8}$",
+            message = "Format invalide. Utilisez : 99123456 ou +21699123456"
+    )
+    private String telephone;  // ← NEW FIELD ADDED
+
     @NotBlank
     @JsonIgnore
     private String motDePasse;
 
     private String description;
-
     private String cvPath;
-
     private String imgPath;
-
 
     @ManyToOne
     @JoinColumn(name = "id_abonnement")
@@ -55,7 +58,7 @@ public class Utilisateur {
     @Enumerated(EnumType.STRING)
     private List<Role> roles;
 
-
+    // ... rest of your relationships (unchanged)
     @JsonIgnore
     @OneToMany(mappedBy = "expediteur", cascade = CascadeType.ALL)
     private List<Message> messagesEnvoyes;
@@ -79,8 +82,4 @@ public class Utilisateur {
     @JsonIgnore
     @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OffreTravail> offresPostees = new ArrayList<>();
-
-
-
-
 }

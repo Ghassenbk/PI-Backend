@@ -39,19 +39,15 @@ public class UtilisateurService {
     }
 
     // Mapper entity -> DTO
-    public UtilisateurDTO toDTO(Utilisateur user) {
+    private UtilisateurDTO toDTO(Utilisateur u) {
         UtilisateurDTO dto = new UtilisateurDTO();
-        dto.setId(user.getId());
-        dto.setNom(user.getNom());
-        dto.setPrenom(user.getPrenom());
-        dto.setEmail(user.getEmail());
-        dto.setDescription(user.getDescription());
-        dto.setCvPath(user.getCvPath());
-        dto.setImgPath(user.getImgPath());
-        if(user.getAbonnement() != null) {
-            dto.setAbonnementId(user.getAbonnement().getId());
-        }
+        dto.setId(u.getId());
+        dto.setNom(u.getNom());
+        dto.setPrenom(u.getPrenom());
+        dto.setEmail(u.getEmail());
+        dto.setDescription(u.getDescription());
+        dto.setCvPath(u.getCvPath());
+        dto.setImgPath(u.getImgPath());
         return dto;
     }
-
 }

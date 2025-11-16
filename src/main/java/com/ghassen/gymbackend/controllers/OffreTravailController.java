@@ -87,5 +87,16 @@ public class OffreTravailController {
         return ResponseEntity.ok(updated);
     }
 
+    @PutMapping("/{offreId}/assign/{candidatureId}/employer/{employerId}")
+    public ResponseEntity<OffreTravail> assignCandidature(
+            @PathVariable Long offreId,
+            @PathVariable Long candidatureId,
+            @PathVariable Long employerId) {
+
+        OffreTravail updatedOffre = offreService.assignCandidature(offreId, candidatureId, employerId);
+        return ResponseEntity.ok(updatedOffre);
+    }
+
+
 
 }

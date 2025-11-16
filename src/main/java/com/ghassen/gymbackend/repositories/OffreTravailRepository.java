@@ -3,6 +3,9 @@ package com.ghassen.gymbackend.repositories;
 import com.ghassen.gymbackend.entities.OffreTravail;
 import com.ghassen.gymbackend.entities.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -13,4 +16,7 @@ public interface OffreTravailRepository extends JpaRepository<OffreTravail, Long
 
 
     List<OffreTravail> findByEmployer_IdAndStatus(Long employerId, Status status);
+
+
+
 }

@@ -260,6 +260,40 @@ public class OffreTravailService {
                     ". Autorisé : " + allowedTypes);
         }
     }
+    @Transactional
+    public OffreTravail assignCandidature(Long offreId, Long candidatureId, Long employerId) {
+
+        OffreTravail offre = offreRepo.findById(offreId)
+                .orElseThrow(() -> new IllegalArgumentException("Offre non trouvée"));
+
+        if (!offre.getEmployer().getId().equals(employerId)) {
+            throw new SecurityException("Accès refusé");
+        }
+
+        if (offre.getStatus() != Status.DISPONIBLE) {
+            throw new IllegalStateException("Offre non disponible");
+        }
+
+        Candidature selected = candidatureRepo.findById(candidatureId)
+                .orElseThrow(() -> new IllegalArgumentException("Candidature non trouvée"));
+
+        if (!selected.getOffreTravail().getId().equals(offreId)) {
+            throw new IllegalArgumentException("Candidature invalide");
+        }
+
+        // 1. Update offer
+        offre.setStatus(Status.ATTRIBUE);
+        offre.setPrix(selected.getPrixPropose());
+
+        // 2. Accept selected candidature
+        selected.setStatus(StatusCandidature.ACCEPTEE);
+
+        // 3. Delete all others → NOW WORKS!
+        candidatureRepo.deleteAllExceptSelected(offreId, candidatureId);
+
+        return offreRepo.save(offre);
+    }
+
 
 
 }
