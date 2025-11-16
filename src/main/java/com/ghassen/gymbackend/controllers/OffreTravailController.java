@@ -97,6 +97,12 @@ public class OffreTravailController {
         return ResponseEntity.ok(updatedOffre);
     }
 
+    @GetMapping("/all")
+    public List<OffreTravail> getAllOffers() {
+        return offreService.getAllOffers();
+    }
+
+
 
 
 }
