@@ -5,6 +5,8 @@ import com.ghassen.gymbackend.service.UtilisateurService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/utilisateurs")
 @RequiredArgsConstructor
@@ -23,4 +25,11 @@ public class UtilisateurController {
                                             @RequestBody UtilisateurDTO dto) {
         return utilisateurService.updateUtilisateur(id, dto);
     }
+
+
+    @GetMapping("/all")
+    public List<UtilisateurDTO> getAllUtilisateurs() {
+        return utilisateurService.getAllUtilisateurs();
+    }
+
 }

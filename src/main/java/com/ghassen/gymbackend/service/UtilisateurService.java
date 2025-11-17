@@ -1,10 +1,14 @@
 package com.ghassen.gymbackend.service;
 
+import com.ghassen.gymbackend.dto.RegisterRequest;
 import com.ghassen.gymbackend.dto.UtilisateurDTO;
+import com.ghassen.gymbackend.entities.Role;
 import com.ghassen.gymbackend.entities.Utilisateur;
 import com.ghassen.gymbackend.repositories.UtilisateurRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import java.util.Optional;
 
@@ -50,4 +54,35 @@ public class UtilisateurService {
         dto.setImgPath(u.getImgPath());
         return dto;
     }
+
+    public List<UtilisateurDTO> getAllUtilisateurs() {
+        return utilisateurRepository.findAll()
+                .stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public UtilisateurDTO register(RegisterRequest request) {
+
+        if (utilisateurRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Email déjà utilisé");
+        }
+
+        Utilisateur u = new Utilisateur();
+        u.setNom(request.getNom());
+        u.setPrenom(request.getPrenom());
+        u.setEmail(request.getEmail());
+        u.setTelephone(request.getTelephone());
+        u.setDescription(request.getDescription());
+
+        u.setMotDePasse(request.getMotDePasse());
+
+        u.setRoles(List.of(Role.EMPLOYER));
+
+        utilisateurRepository.save(u);
+
+        return toDTO(u);
+    }
+
+
 }
