@@ -5,14 +5,19 @@ import com.ghassen.gymbackend.dto.OffreTravailCreateDTO;
 import com.ghassen.gymbackend.dto.OffreTravailUpdateDTO;
 import com.ghassen.gymbackend.entities.Candidature;
 import com.ghassen.gymbackend.entities.OffreTravail;
+import com.ghassen.gymbackend.entities.StatusCandidature;
+import com.ghassen.gymbackend.entities.Utilisateur;
 import com.ghassen.gymbackend.service.OffreTravailService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/offres")
@@ -105,4 +110,53 @@ public class OffreTravailController {
 
 
 
+
+    @GetMapping("/{offreId}/employer/{employerId}/assigned-worker")
+    public ResponseEntity<?> getAssignedWorker(
+            @PathVariable Long offreId,
+            @PathVariable Long employerId) {
+
+        try {
+            OffreTravail offre = offreService.getOffreByIdAndEmployer(offreId, employerId);
+
+            // Find the accepted candidature (status = ACCEPTEE)
+            Candidature accepted = offre.getCandidatures().stream()
+                    .filter(c -> c.getStatus() == StatusCandidature.ACCEPTEE)
+                    .findFirst()
+                    .orElse(null);
+
+            if (accepted == null) {
+                return ResponseEntity.noContent().build(); // 204 → no worker assigned
+            }
+
+            // Force load utilisateur (to avoid lazy loading)
+            Hibernate.initialize(accepted.getUtilisateur());
+            Utilisateur worker = accepted.getUtilisateur();
+
+            var response = new LinkedHashMap<String, Object>();
+
+            response.put("candidatureId", accepted.getId());
+            response.put("prixFinal", offre.getPrix());
+            response.put("prixPropose", accepted.getPrixPropose());
+            response.put("message", accepted.getMessage());
+            response.put("dateCandidature", accepted.getDateCandidature());
+
+            // PROOF IMAGE IS HERE → directly from OffreTravail
+            response.put("proofImage", offre.getImgPathPreuve());
+
+            response.put("worker", Map.of(
+                    "id", worker.getId(),
+                    "name", worker.getNom() + " " + worker.getPrenom(),
+                    "email", worker.getEmail(),
+                    "telephone", worker.getTelephone() != null ? worker.getTelephone() : "",
+                    "photo", worker.getImgPath() != null ? worker.getImgPath() : ""
+            ));
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(404)
+                    .body(Map.of("error", "Offre not found or access denied"));
+        }
+    }
 }

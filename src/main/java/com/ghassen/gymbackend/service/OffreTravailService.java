@@ -6,6 +6,7 @@ import com.ghassen.gymbackend.dto.OffreTravailUpdateDTO;
 import com.ghassen.gymbackend.entities.*;
 import com.ghassen.gymbackend.repositories.*;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -299,6 +300,22 @@ public class OffreTravailService {
         return offreRepo.save(offre);
     }
 
+    // OffreTravailService.java
+    public OffreTravail getOffreByIdAndEmployer(Long offreId, Long employerId) {
+        OffreTravail offre = offreRepo.findByIdAndEmployer_Id(offreId, employerId)
+                .orElseThrow(() -> new RuntimeException("Offre not found"));
+
+        // Critical: Load candidatures + utilisateur
+        Hibernate.initialize(offre.getCandidatures());
+        offre.getCandidatures().forEach(c -> {
+            Hibernate.initialize(c);
+            if (c.getUtilisateur() != null) {
+                Hibernate.initialize(c.getUtilisateur());
+            }
+        });
+
+        return offre;
+    }
 
 
 }

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface OffreTravailRepository extends JpaRepository<OffreTravail, Long> {
     List<OffreTravail> findByEmployerId(Long employerId);
@@ -16,6 +17,9 @@ public interface OffreTravailRepository extends JpaRepository<OffreTravail, Long
 
 
     List<OffreTravail> findByEmployer_IdAndStatus(Long employerId, Status status);
+
+
+    Optional<OffreTravail> findByIdAndEmployer_Id(Long id, Long employerId);
 
 
 
