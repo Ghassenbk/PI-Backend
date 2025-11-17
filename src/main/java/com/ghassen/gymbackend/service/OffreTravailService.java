@@ -210,6 +210,11 @@ public class OffreTravailService {
         return offers;
     }
 
+    @Transactional(readOnly = true)
+    public List<OffreTravail> getAllOffers() {
+        return offreRepo.findAll();
+    }
+
 
 
 

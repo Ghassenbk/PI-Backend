@@ -2,7 +2,9 @@
 package com.ghassen.gymbackend.controllers;
 
 import com.ghassen.gymbackend.dto.LoginRequest;
+import com.ghassen.gymbackend.dto.RegisterRequest;
 import com.ghassen.gymbackend.dto.UtilisateurDTO;
+import com.ghassen.gymbackend.entities.Role;
 import com.ghassen.gymbackend.entities.Utilisateur;
 import com.ghassen.gymbackend.repositories.UtilisateurRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -48,4 +52,28 @@ public class AuthController {
 
         return ResponseEntity.ok(dto);
     }
+
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
+
+        // Vérifier si email déjà existant
+        if (utilisateurRepository.existsByEmail(request.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Un compte existe déjà avec cet email");
+        }
+
+        Utilisateur u = new Utilisateur();
+        u.setNom(request.getNom());
+        u.setPrenom(request.getPrenom());
+        u.setEmail(request.getEmail());
+        u.setMotDePasse(request.getMotDePasse());
+        u.setTelephone(request.getTelephone());
+        u.setDescription(request.getDescription());
+        u.setRoles(List.of(Role.EMPLOYER));
+
+        utilisateurRepository.save(u);
+
+
+        return ResponseEntity.ok("Compte créé avec succès !");
+    }
+
 }
