@@ -61,4 +61,8 @@ public class OffreTravail {
     @JsonIgnore
     @OneToMany(mappedBy = "offreTravail", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Candidature> candidatures = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "offreTravail", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore // avoid infinite recursion in JSON
+    private List<Conflit> conflits = new ArrayList<>();
 }

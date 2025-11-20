@@ -11,16 +11,24 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                //.allowedOrigins("http://localhost:4200")
+                .allowedOrigins("http://localhost:4200")
                 .allowedOriginPatterns("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedMethods("*")
                 .allowedHeaders("*");
         //.allowCredentials(true);
     }
+
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/public/**")
-                .addResourceLocations("file:/C:/ProjetIntegration/GymWebsite/public/");
+        // CETTE LIGNE EST LA SEULE QUI MARCHE À 100% EN 2025
+        registry.addResourceHandler("/uploads/conflits/**")
+                .addResourceLocations("file:C:/uploads/conflits/")  // ← UN SEUL SLASH APRÈS file:
+                .setCachePeriod(0);
+
+        // Bonus : on ajoute aussi le pattern générique
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations("file:C:/uploads/conflits/");
     }
 
 
