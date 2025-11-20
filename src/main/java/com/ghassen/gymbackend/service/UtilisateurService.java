@@ -83,6 +83,21 @@ public class UtilisateurService {
 
         return toDTO(u);
     }
+// src/main/java/com/ghassen/gymbackend/service/UtilisateurService.java
+
+    public void updateProfileImage(Long id, String imgPath) {
+        Utilisateur user = utilisateurRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        user.setImgPath(imgPath);
+        utilisateurRepository.save(user);
+    }
+
+    public void updateCV(Long id, String cvPath) {
+        Utilisateur user = utilisateurRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        user.setCvPath(cvPath);
+        utilisateurRepository.save(user);
+    }
 
 
 }
