@@ -20,6 +20,8 @@ public class Evaluation {
 
     private int note;
     private String commentaire;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date datePublication;
 
     // 🔁 L’évaluateur (celui qui évalue)
